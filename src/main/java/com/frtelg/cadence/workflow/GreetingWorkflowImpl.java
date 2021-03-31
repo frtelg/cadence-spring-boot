@@ -1,23 +1,34 @@
 package com.frtelg.cadence.workflow;
 
+import com.uber.cadence.workflow.Workflow;
+
+import java.util.Objects;
+
 public class GreetingWorkflowImpl implements GreetingWorkflow {
+
+    private String name = "Stranger";
+    private boolean active = true;
+
     @Override
     public void greet() {
-        // TODO: implement
+        while (active) {
+            String oldName = name;
+            Workflow.await(() -> !Objects.equals(oldName, name) || !active);
+        }
     }
 
     @Override
     public void changeName(String name) {
-        // TODO: implement
+        this.name = name;
     }
 
     @Override
     public void terminate() {
-
+        this.active = false;
     }
 
     @Override
     public String getCurrentName() {
-        return null; // TODO: implement
+        return this.name;
     }
 }
