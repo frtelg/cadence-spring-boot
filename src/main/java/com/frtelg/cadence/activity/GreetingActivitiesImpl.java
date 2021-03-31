@@ -12,6 +12,6 @@ public class GreetingActivitiesImpl implements GreetingActivities {
 
     @Override
     public void sayHi(String name) {
-        // TODO: implement
+        printStream.println("Hi " + name);
     }
 }
