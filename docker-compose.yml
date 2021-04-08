@@ -21,10 +21,12 @@ services:
     environment:
       - "CASSANDRA_SEEDS=cassandra"
       - "STATSD_ENDPOINT=statsd:8125"
-      - "DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development.yaml"
+      - "DYNAMIC_CONFIG_FILE_PATH=custom-config/development.yaml"
     depends_on:
       - cassandra
       - statsd
+    volumes:
+      - "./config:/etc/cadence/custom-config"
   cadence-web:
     image: ubercadence/web:latest
     environment:

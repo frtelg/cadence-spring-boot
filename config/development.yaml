@@ -1,0 +1,13 @@
+frontend.enableClientVersionCheck:
+- value: true
+  constraints: {}
+system.minRetentionDays:
+- value: 0
+  constraints: {}
+history.EnableConsistentQueryByDomain:
+- value: true
+  constraints: {}
+frontend.visibilityListMaxQPS:
+- value: 10000
+frontend.esVisibilityListMaxQPS:
+- value: 10000
