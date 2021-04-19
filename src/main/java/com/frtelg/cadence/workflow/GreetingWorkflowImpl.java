@@ -1,13 +1,16 @@
 package com.frtelg.cadence.workflow;
 
 import com.frtelg.cadence.activity.GreetingActivities;
+import com.uber.cadence.activity.ActivityOptions;
 import com.uber.cadence.workflow.Workflow;
 
 import java.util.Objects;
 
+import static com.frtelg.cadence.config.CadenceConfiguration.ACTIVITY_OPTIONS;
+
 public class GreetingWorkflowImpl implements GreetingWorkflow {
 
-    private final GreetingActivities greetingActivities = Workflow.newActivityStub(GreetingActivities.class);
+    private final GreetingActivities greetingActivities = Workflow.newActivityStub(GreetingActivities.class, ACTIVITY_OPTIONS);
 
     private String name = "Stranger";
     private boolean active = true;
