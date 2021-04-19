@@ -1,5 +1,6 @@
 package com.frtelg.cadence.activity;
 
+import com.frtelg.cadence.exception.InvalidNumberException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.PrintStream;
@@ -22,6 +23,10 @@ public class GreetingActivitiesImpl implements GreetingActivities {
         if (counter == 2 || counter == 3) {
             counter++;
             throw new IllegalStateException("I do not like the number " + counter);
+        }
+
+        if (counter == 5) {
+            throw new InvalidNumberException(counter);
         }
 
         printStream.println("Hi " + name);

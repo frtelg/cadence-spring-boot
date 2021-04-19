@@ -1,7 +1,11 @@
 package com.frtelg.cadence.workflow;
 
 import com.frtelg.cadence.activity.GreetingActivities;
+import com.frtelg.cadence.exception.InvalidNumberException;
+import com.google.common.base.Throwables;
 import com.uber.cadence.activity.ActivityOptions;
+import com.uber.cadence.workflow.ActivityException;
+import com.uber.cadence.workflow.ActivityFailureException;
 import com.uber.cadence.workflow.Workflow;
 
 import java.util.Objects;
@@ -19,7 +23,17 @@ public class GreetingWorkflowImpl implements GreetingWorkflow {
     public void greet() {
         while (active) {
             String oldName = name;
-            greetingActivities.sayHi(name);
+
+            try {
+                greetingActivities.sayHi(name);
+            } catch (ActivityFailureException e) {
+                if (Throwables.getRootCause(e) instanceof InvalidNumberException) {
+                    terminate();
+                } else {
+                    throw e;
+                }
+            }
+
             Workflow.await(() -> !Objects.equals(oldName, name) || !active);
         }
     }
