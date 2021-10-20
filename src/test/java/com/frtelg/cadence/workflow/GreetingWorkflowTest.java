@@ -8,16 +8,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
@@ -26,13 +22,12 @@ class GreetingWorkflowTest {
     private TestWorkflowEnvironment workflowEnvironment;
     private WorkflowClient workflowClient;
     private final Class<?> workflowImplementationClass = GreetingWorkflowImpl.class;
-    private GreetingActivities greetingActivities;
     private PrintStream printStream;
 
     @BeforeEach
     void setup() {
         printStream = mock(PrintStream.class);
-        greetingActivities = new GreetingActivitiesImpl(printStream);
+        var greetingActivities = new GreetingActivitiesImpl(printStream);
 
         workflowEnvironment = TestWorkflowEnvironment.newInstance();
         var worker = workflowEnvironment.newWorker(GreetingWorkflow.TASK_LIST);
@@ -52,17 +47,20 @@ class GreetingWorkflowTest {
     @Test
     void testWorkflow() throws InterruptedException, ExecutionException, TimeoutException {
         var workflow = workflowClient.newWorkflowStub(GreetingWorkflow.class);
+        var expectedName = "Handige Harry";
 
         // Start workflow
         var execution = WorkflowClient.execute(workflow::greet);
         assertEquals("Stranger", workflow.getCurrentName());
 
         // Send signal
-        workflow.changeName("Handige Harry");
+        workflow.changeName(expectedName);
 
-        Thread.sleep(50); // to avoid timing issues
+        await().atMost(200, TimeUnit.MILLISECONDS)
+                .until(() -> workflow.getCurrentName().equals(expectedName));
+
         var currentName = workflow.getCurrentName();
-        assertEquals("Handige Harry", currentName);
+        assertEquals(expectedName, currentName);
 
         // Terminate workflow
         workflow.terminate();

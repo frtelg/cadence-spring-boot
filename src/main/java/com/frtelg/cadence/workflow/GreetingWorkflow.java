@@ -7,8 +7,8 @@ import com.uber.cadence.workflow.WorkflowMethod;
 public interface GreetingWorkflow {
     String TASK_LIST = "Example";
     // A workflow method describes the main workflow. Calling the workflow will start the workflow, the workflow ends
-    // when the WorkflowMethod is complete
-    @WorkflowMethod(executionStartToCloseTimeoutSeconds = 360, taskList = TASK_LIST)
+    // when the WorkflowMethod is complete (or when the timeout has exceeded, which is currently 600 seconds (10 mins))
+    @WorkflowMethod(executionStartToCloseTimeoutSeconds = 600, taskList = TASK_LIST)
     void greet();
 
     // A signal method can be used to trigger the workflow from outside, in order to change its state.

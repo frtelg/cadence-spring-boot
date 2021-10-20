@@ -74,11 +74,17 @@ public class CadenceWorkerStarter {
     }
 
     private boolean domainExists() throws TException {
-        ListDomainsRequest listDomainsRequest = new ListDomainsRequest();
-        ListDomainsResponse response = workflowService.ListDomains(listDomainsRequest);
-        List<DescribeDomainResponse> domains = response.getDomains();
+        try {
+            ListDomainsRequest listDomainsRequest = new ListDomainsRequest();
+            ListDomainsResponse response = workflowService.ListDomains(listDomainsRequest);
+            List<DescribeDomainResponse> domains = response.getDomains();
 
-        return domains.stream()
-                .anyMatch(d -> d.domainInfo.name.equals(DOMAIN));
+            return domains.stream()
+                    .anyMatch(d -> d.domainInfo.name.equals(DOMAIN));
+        } catch (UnsupportedOperationException e) {
+            log.warn("Listing or registering domains is not supported when using a local embedded test server, " +
+                    "these steps will be skipped");
+            return true; // evaluate as true so domain won't be registered.
+        }
     }
 }
